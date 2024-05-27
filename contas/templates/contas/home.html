@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Home</title>
+</head>
+<body>
+    <h1>Hello Django!</h1>
+    <!-- Uso do Jinja para utilizar variáveis dentro do template HTML do Django -->
+    <p>Agora são {{ now }}</p>
+    <h2>Transações</h2>
+    <ul>
+        {% for transacao in transacoes %}
+            {% if transacao == 't1' %}
+                <li><b>{{ transacao }}</b></li>
+            {% else %}
+                <li>{{ transacao }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+</html>

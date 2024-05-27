@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e1dc7f10-ad7e-4509-9aba-7d6a257cbc31" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ProjectId" id="1YaOyawJ3YhbGeLvOxyr77PA5J4" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../Aula 03-20200303/aula03ex" />
+  </component>
+  <component name="RunManager">
+    <configuration name="projeto" type="Python.DjangoServer" factoryName="Django server">
+      <module name="projeto" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e1dc7f10-ad7e-4509-9aba-7d6a257cbc31" name="Default Changelist" comment="" />
+      <created>1583177493890</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1583177493890</updated>
+      <workItem from="1583177498905" duration="1057000" />
+      <workItem from="1583231485292" duration="22000" />
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="466" y="126" width="424" height="479" key="FileChooserDialogImpl" timestamp="1583231505386">
+      <screen x="0" y="0" width="1366" height="739" />
+    </state>
+    <state x="466" y="126" width="424" height="479" key="FileChooserDialogImpl/0.0.1366.739@0.0.1366.739" timestamp="1583231505386" />
+    <state x="366" y="196" key="com.intellij.ide.util.TipDialog" timestamp="1583231487233">
+      <screen x="0" y="0" width="1366" height="739" />
+    </state>
+    <state x="366" y="196" key="com.intellij.ide.util.TipDialog/0.0.1366.739@0.0.1366.739" timestamp="1583231487233" />
+  </component>
+</project>

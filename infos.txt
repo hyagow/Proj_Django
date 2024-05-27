@@ -1,0 +1,421 @@
+Curso de Django (by Gregory Pacheco)
+https://www.youtube.com/watch?v=H8SrsRO5kMc&list=PLHWfNMxB2F4HdKbo8zdgXyxVDOxH429Ko&index=3
+https://www.youtube.com/watch?v=c24SQ6TPDDk&list=PLHWfNMxB2F4HdKbo8zdgXyxVDOxH429Ko&index=8
+
+Requisitos tech:
+- Python3 :: 
+  sudo apt-get install python3.6
+
+- Instalar venv Python :: 
+  sudo apt-get install python3.6-venv
+
+- Criar uma venv :: 
+  python3 -m venv myvenv
+
+- Aivar a venv ::
+  source myvenv/bin/activate
+  Passamos a operar dentro de um Virtual Enrimonment e tudo o que instalarmos fica apenas nesta pasta, não afetando o SO.
+  
+- Desativar a venv ::
+  deactivate --------> (dentro do pasta do projeto, onde tem ao lado a pasta env)
+
+- Instalar o Django dentro da venv ::
+  pip install django
+  pip install django --force
+
+Apresentou o seguinte erro ao tentar instalar sem o "--force":
+Defaulting to user installation because normal site-packages is not writeable
+Requirement already satisfied: django in /usr/local/lib/python3.6/dist-packages (3.0.3)
+Requirement already satisfied: pytz in /usr/lib/python3/dist-packages (from django) (2018.3)
+Requirement already satisfied: sqlparse>=0.2.2 in /usr/local/lib/python3.6/dist-packages (from django) (0.3.0)
+Requirement already satisfied: asgiref~=3.2 in /usr/local/lib/python3.6/dist-packages (from django) (3.2.3)
+
+Para testar (dentro do myenv):
+python3
+import django <--------------------- a partir daqui dava um erro "No module named django"
+django.VERSION
+(3, 0, 3, 'final', 0)
+
+Solução:
+python -m pip install django
+https://stackoverflow.com/questions/9462212/import-error-no-module-named-djang
+
+
+--- RESUMO DOS COMANDOS ---
+
+---------------------------------------------------------------
+Preparar todo o embiente a partir de um projeto Python
+---------------------------------------------------------------
+
+Supondo que não tem o Python e nem o Virtal Env instalado na máquina:
+
+sudo apt-get install python3.6          instala o Python
+sudo apt-get install python3.6-venv     instala o virtual env
+python3 -m venv myvenv                  cria um cirtual env com o nome myvenv
+source myvenv/bin/activate              init o myvenv
+pip install django --force              instala o django dentro do myvenv
+
+---------------------------------------------------------------
+Iniciar novo projeto Django
+---------------------------------------------------------------
+Dentro do virtual env ::
+django-admin startproject proj_test     Cria uma pasta proj_test com outra proj_test dentro
+django-admin startproject proj_test .   Cria uma pasta proj_test na pasta atual
+
+---------------------------------------------------------------
+Criar uma app
+---------------------------------------------------------------
+python manage.py startapp contas        criar app
+python manage.py migrate                init BD SQLite (por padrão)
+python manage.py runserver              init app
+python manage.py createsuperuser        cria um super user para logar na app (by app admin do Django)
+
+---------------------------------------------------------------
+Rodar o projeto depois que inicia o PC
+---------------------------------------------------------------
+
+A partir da pasta raiz do projeto onde está o ficheiro "manage.py":
+
+. venv/bin/activate
+OU
+source venv/bin/activate 
+    Deverá aparecer: (venv) dantiii@dantiii-X556URK:/mnt...
+python3 manage-py runserver
+    Starting development server at http://127.0.0.1:8000/
+
+
+---------------------------------------------------------------
+Templates
+---------------------------------------------------------------
+O Django espera que exista uma pasta chamada "templates" e outra com o mesmo nome da app dentro de template.
+Exemplo para uma app chamada Contas:
+contas
+    templates
+        contas
+            home.html
+            about.html
+
+
+---------------------------------------------------------------
+Modelos e Migrations
+---------------------------------------------------------------
+
+# Os relacionamentos de BD são basicamente 3:
+# - ForeignKey        => 1 -> m
+# - OneToOneField     => 1 -> 1
+# - ManytoManyField   => m -> m
+
+# Após a criação de um modelo:
+# - python3 manage.py makemigrations    => Criar o arquivo de migração
+# - python3 manage.py migrate           => Aplicar a criação da nova tabela no BD
+# - Registar o novo model em admin.py
+    # from .models import Transacao
+    # admin.site.register(Transacao)
+
+
+---------------------------------------------------------------
+Render Passando Dados para o Template
+---------------------------------------------------------------
+
+Uso do Jinja em template HTML do Django.
+
+// --- views.py
+
+from django.shortcuts import render
+from django.http import HttpResponse
+import datetime
+
+# Create your views here.
+def home(request):
+    data = {}
+    data['transacoes'] = ['t1', 't2', 't3']
+    data['now'] = datetime.datetime.now()
+    # html = "<html><body>It is now %s.</body></html>" % now
+
+    return render(request, 'contas/home.html', data)  # HttpResponse(html)
+
+// --- home.html
+
+<body>
+    <h1>Seja bem vindo!</h1>
+    <!-- Uso do Jinja para utilizar variáveis dentro do template HTML do Django -->
+    <p>Agora são {{ now }}</p>
+    <h2>Transações</h2>
+    <ul>
+        {% for transacao in transacoes %}
+            {% if transacao == 't1' %}
+                <li><b>{{ transacao }}</b></li>
+            {% else %}
+                <li>{{ transacao }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+</body>
+
+
+---------------------------------------------------------------
+CRUD :: Create
+---------------------------------------------------------------
+
+# ModelForm » https://docs.djangoproject.com/en/3.0/topics/forms/modelforms/
+Ter um form baseado em um model, o Django cria automaticamente todos os campos do form, cria suas validações.
+
+
+// --- form.py
+
+
+from django.forms import ModelForm
+from .models import Transacao
+
+class TransacaoForm(ModelForm):
+    # Classe de metadata que recebe um model e os fields que queremos que sejam mostrados
+    class Meta:
+        model = Transacao
+        fields = ['data', 'descricao', 'valor', 'observacoes', 'categoria']  # Com isto definiu-se um form que o Django vai criar todas as facilidades
+        # Agora, precisa adicionar este immport em views.py: from .form import TransacaoForm
+
+
+// --- utls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- viewspy
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+
+def nova_transacao(request):
+    form = TransacaoForm(request.POST or None)
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+        # return listagem(request)
+        # return render(request, 'contas/listagem.html')
+
+    return render(request, 'contas/form.html', {'form': form})
+
+
+// --- form.html (template)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+    </form>
+
+</body>
+</html>
+
+
+---------------------------------------------------------------
+CRUD :: Update
+---------------------------------------------------------------
+
+
+// --- urls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),  # <---
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- views.py
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+import datetime
+from .models import Transacao
+
+def update(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+
+    return render(request, 'contas/form.html', {'form': form})
+
+
+// --- listagem.html (onde tem um link que envia para um URL "http://127.0.0.1:8000/update/ID"
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Listagem</title>
+</head>
+<body>
+    <h2>Listagem</h2>
+    <ul>
+        {% for transacao in transacoes %}
+        <li><a href="{% url 'url_update' transacao.id %}">{{ transacao.descricao }} - {{ transacao.data }} - {{ transacao.valor }} - {{ transacao.categoria }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'url_nova' %}">Novo</a>
+</body>
+</html>
+
+
+// --- form.html (form para atualizar o registo)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+    </form>
+
+</body>
+</html>
+
+
+---------------------------------------------------------------
+CRUD :: Delete
+---------------------------------------------------------------
+
+
+// --- urls.py
+
+
+from django.contrib import admin
+from django.urls import path
+from contas.views import home, listagem, nova_transacao, update, delete
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', listagem, name='url_home_listagem'),
+    path('home/', home),
+    path('listagem', listagem, name='url_listagem'),
+    path('update/<int:pk>', update, name='url_update'),
+    path('delete/<int:pk>', delete, name='url_delete'),  # <---
+    path('nova', nova_transacao, name='url_nova'),
+]
+
+
+// --- views.py
+
+
+from django.shortcuts import render, redirect
+from .form import TransacaoForm
+from .models import Transacao
+
+def update(request, pk):
+
+    data = {}
+
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    form = TransacaoForm(request.POST or None, instance=transacao)  # Inicia um formulário com um objeto da preenchido
+
+    if form.is_valid():
+        form.save()
+        return redirect('url_home_listagem')
+
+    data['form'] = form
+    # data['transacao'] = transacao
+    data['pk'] = pk  # <---
+    return render(request, 'contas/form.html', data)  # data || {'form': form}
+
+
+def delete(request, pk):
+    # Get the transaction from BD
+    transacao = Transacao.objects.get(pk=pk)
+    transacao.delete()
+    return redirect('url_home_listagem')  # send user again to the listing page
+
+
+// --- form.html (adicionado link para deletar o registo)
+
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Contas » Form (ModelForm)</title>
+</head>
+<body>
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <button type="submit">Salvar</button>
+        <a href="{% url 'url_delete' pk %}">Remover</a>
+    </form>
+</body>
+</html>
+
+
+---------------------------------------------------------------
+Documentação Django
+---------------------------------------------------------------
+
+URL dispatcher
+https://docs.djangoproject.com/en/3.0/topics/http/urls/
+
+Writing views
+https://docs.djangoproject.com/en/3.0/topics/http/views/
+
+Model field reference
+https://docs.djangoproject.com/en/3.0/ref/models/fields/
